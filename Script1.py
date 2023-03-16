@@ -19,7 +19,7 @@ print('Running Price List function')
 mb.FetchMBCurrentPrice(dict_of_ids, WORLD)
 
 print('Running Sale History Function')
-mb.FetchMBSaleHistory(dict_of_ids, WORLD)
+mb.FetchMBSaleHistory(dict_of_ids, WORLD, 2)
 
 print(dict_of_ids)
 

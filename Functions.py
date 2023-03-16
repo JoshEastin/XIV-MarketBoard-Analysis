@@ -3,8 +3,29 @@ import pyxivapi
 from pyxivapi.models import Filter, Sort
 import requests
 from collections import defaultdict
+import pandas as pd
+from matplotlib import pyplot as plt
+from dotenv import load_dotenv
+import os
 
-client = pyxivapi.XIVAPIClient(api_key="--API key goes here--")
+def configure():
+    load_dotenv()
+
+api_key = os.getenv('api_key')
+client = pyxivapi.XIVAPIClient(api_key="{api_key}")
+
+
+def DrawBarGraph(list):
+    data = pd.DataFrame(list)
+    name = data['Name']
+    averagePrice = data['Average_Price']
+
+    fix, ax = plt.subplots(figsize =(16,9))
+
+    ax.barh(name, averagePrice)
+
+    plt.show()
+
 
 def fetch_most_sold_ids():
     response = requests.get('https://universalis.app/api/v2/extra/stats/most-recently-updated?world=Excalibur&entries=20')
@@ -19,38 +40,37 @@ def fetch_most_sold_ids():
         
     return my_dict
 
-def fetch_mb_data(id_dict, world, listings=1):
+def FetchMBCurrentPrice(id_dict, world, listings=1):
     for x in range(len(id_dict)):
-        #print('Fetching from https://universalis.app/api/v2/' + world + '/' + str(id_dict[x][0]) + '?listings=' + str(listings))
+        print('x = ' + str(x))
+        #print('Fetching from https://universalis.app/api/v2/' + world + '/' + str(id_dict[x]['ID']) + '?listings=' + str(listings))
         response = requests.get(
-            'https://universalis.app/api/v2/' + world + '/' + str(id_dict[x][0]) + '?listings=' + str(listings))
+            'https://universalis.app/api/v2/' + world + '/' + str(id_dict[x]['ID']) + '?listings=' + str(listings))
         a = response.json()
 
-        collect = defaultdict(dict)
-        for key in a['listings']:
-            id_dict[x].append(key['pricePerUnit'])
+        if(a['listings'] != []):
+            id_dict[x].update(pricePerUnit = a['listings'][0]['pricePerUnit'])
+        else:
+            id_dict[x].update(pricePerUnit = 0)
+        print(id_dict[x])
 
 def fetch_marketable_items():
     response = requests.get('https://universalis.app/api/v2/marketable').json()
     return response
 
-def fetch_mb_sale_history(id_dict, world, sales=100):
+def FetchMBSaleHistory(id_dict, world, sales=10):
     for x in range(len(id_dict)):
         #print('Fetching from https://universalis.app/api/v2/history/' + world + '/' + str(id_dict[x][0]) + '?entriesToReturn=' + str(sales))
         response = requests.get(
-            'https://universalis.app/api/v2/history/' + world + '/' + str(id_dict[x][0]) + '?entriesToReturn=' + str(sales))
+            'https://universalis.app/api/v2/history/' + world + '/' + str(id_dict[x]['ID']) + '?entriesToReturn=' + str(sales))
 
-    a = response.json()
-    
-    collect = defaultdict(dict)
-    sum = 0
-    #print("a['entries']" + str(a['entries']))
-    for x in range(len(id_dict)):
-        for y in range(len(id_dict)):
+        a = response.json()
+
+        sum = 0
+        for y in range(sales):
             sum += a['entries'][y]['pricePerUnit']
         average = sum / sales
-
-        id_dict[x].append(average)
+        id_dict[x].update(Average_Price = average)
 
 async def SearchItems(itemLevel = 0):
     filterList = [Filter("LevelItem", "gte", itemLevel)]
@@ -72,15 +92,15 @@ async def SearchItems(itemLevel = 0):
     await client.session.close()
     return my_list
 
-async def convert_ids(id_dict):
-    
-    for x in range(len(id_dict)):
-        item = await client.index_by_id(
-            index="Item",
-            content_id=id_dict[x][0],
-            columns=["Name"]
-        )
-
-        id_dict[x].append(item['Name'])
-
-    await client.session.close()
+#async def convert_ids(id_dict):
+#    
+#    for x in range(len(id_dict)):
+#        item = await client.index_by_id(
+#            index="Item",
+#            content_id=id_dict[x][0],
+#            columns=["Name"]
+#        )
+#
+#        id_dict[x].append(item['Name'])
+#
+#    await client.session.close()

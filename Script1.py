@@ -6,11 +6,11 @@ import pandas as pd
 import Functions as mb
 
 WORLD = 'Excalibur'
-ITEM_LEVEL = 620
+ITEM_LEVEL = 610
 
 print('Running ID List function')
 dict_of_ids = asyncio.run(mb.SearchItems(ITEM_LEVEL))
-#print(dict_of_ids)
+print(mb.CreateStringOfIDs(dict_of_ids))
 
 #print("Attaching names to ID")
 #asyncio.get_event_loop().run_until_complete(mb.convert_ids(dict_of_ids))

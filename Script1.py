@@ -1,26 +1,28 @@
-import asyncio
-import logging
-import aiohttp
-import json
-import pandas as pd
-import Functions as mb
+import Universalis
+import XIVApi
+import Graph
+import Files
 
 WORLD = 'Excalibur'
 ITEM_LEVEL = 610
 
-print('Running ID List function')
-dict_of_ids = asyncio.run(mb.SearchItems(ITEM_LEVEL))
-print(mb.CreateStringOfIDs(dict_of_ids))
+# userDefinedList = XIVApi.SearchIDByName(
+#     [{'Name': 'Carrot Pudding'}, {'Name': 'Garlean Pizza'}, {'Name': 'Gyros'}, 
+#      {'Name': 'Jhinga Biryani'}, {'Name': 'Jhinga Curry'}, {'Name': 'King Urchin Loaf'}, 
+#      {'Name': 'Loaghtan Rump Steak'}, {'Name': 'Melon Juice'}, {'Name': 'Melon Pie'}, 
+#      {'Name': 'Piennolo Tomato Salad'}, {'Name': 'Sunset Carrot Nibbles'}, {'Name': 'Urchin Pasta'},
+#      {'Name': 'Grade 7 Tincture of Dexterity'}, {'Name': 'Grade 7 Tincture of Intelligence'}, 
+#      {'Name': 'Grade 7 Tincture of Mind'}, {'Name': 'Grade 7 Tincture of Strength'}, 
+#      {'Name': 'Grade 7 Tincture of Vitality'}], 'RaidFood')
 
-#print("Attaching names to ID")
-#asyncio.get_event_loop().run_until_complete(mb.convert_ids(dict_of_ids))
+userDefinedList = Files.ReadDictFromCSVFile('RaidFood')
 
 print('Running Price List function')
-mb.FetchMBCurrentPrice(dict_of_ids, WORLD)
+Universalis.FetchMBCurrentPrice(userDefinedList, WORLD)
 
 print('Running Sale History Function')
-mb.FetchMBSaleHistory(dict_of_ids, WORLD, 2)
+Universalis.FetchMBSaleHistory(userDefinedList, WORLD)
 
-print(dict_of_ids)
+print(userDefinedList)
 
-mb.DrawBarGraph(dict_of_ids)
+Graph.DrawBarGraph(userDefinedList)

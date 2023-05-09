@@ -1,6 +1,6 @@
 import requests
 import os
-import Files
+import Functions.Files as Files
 EPOCH_DAY = 86400
 SEVEN_DAYS_MS = 604800000
 
@@ -24,9 +24,9 @@ def FetchMBCurrentPrice(id_dict, world):
         response = requests.get(
             'https://universalis.app/api/v2/' + world + '/' + idString + '?listings=1')
         a = response.json()
+        Files.WriteJSONFile(a)
 
         for y in range(len(a)):
-            Files.WriteJSONFile(a['items'], 'test4')
             if(a['items'][str(id_dict[x]['ID'])]['listings'] != []):
                 id_dict[x].update(pricePerUnit = a['items'][str(id_dict[x]['ID'])]['listings'][0]['pricePerUnit'])
             else:

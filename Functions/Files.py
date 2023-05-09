@@ -1,6 +1,7 @@
 import json
 import csv
 from csv import DictReader
+import os
 
 def WriteJSONFile(input, fileName='noName'):
     json_object = json.dumps(input, indent=4)
@@ -19,3 +20,16 @@ def ReadDictFromCSVFile(fileName):
         dict_reader = DictReader(csvfile)
         output = list(dict_reader)
         return(output)
+    
+def GenerateListOfCSVFiles():
+    cwdPath = os.getcwd()
+    parentPath = os.path.join(cwdPath, os.pardir)
+    parentPath = parentPath[:-2]
+    listsPath = parentPath + 'Lists'
+    print(listsPath)
+    folderList = []
+    for x in os.listdir(listsPath):
+        if x.endswith('.csv'):
+            folderList.append(x[:-4])
+            
+    return folderList

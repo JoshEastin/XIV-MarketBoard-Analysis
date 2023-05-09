@@ -1,7 +1,7 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 
-def DrawBarGraph(list):
+def DrawBarGraph(list, worldName):
     data = pd.DataFrame(list)
     data_sorted = data.sort_values('Market_Volume')
 
@@ -12,8 +12,8 @@ def DrawBarGraph(list):
 
     ax.barh(name, marketVolume)
 
-    plt.xlabel('Gil (Millions)')
-    plt.title('Market Volume by Item')
+    plt.xlabel('Gil')
+    plt.title('Market Volume by Item (' + worldName + ')')
 
     plt.tight_layout()
 

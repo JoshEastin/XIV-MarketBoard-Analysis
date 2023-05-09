@@ -1,5 +1,5 @@
 import requests
-import Files
+import Functions.Files as Files
 
 def SearchIDByName(namesDict, fileName):
 
@@ -21,3 +21,17 @@ def SearchIDByName(namesDict, fileName):
     Files.WriteDictToCSVFile(namesDict, fileName)
     return(namesDict)
 
+def SearchByString(string, fileName):
+    response=requests.get('https://xivapi.com/search?String=' + string + '&columns=Name,ID')
+
+    a = response.json()
+
+    listOfItems = []
+
+    iteration = 0
+    for searchResult in a['Results']:
+        dict = {'Name': a['Results'][iteration]['Name'], 'ID': a['Results'][iteration]['ID']}
+        listOfItems.append(dict)
+        iteration += 1
+
+    Files.WriteDictToCSVFile(listOfItems, fileName)

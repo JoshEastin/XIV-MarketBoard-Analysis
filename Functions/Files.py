@@ -26,7 +26,6 @@ def GenerateListOfCSVFiles():
     parentPath = os.path.join(cwdPath, os.pardir)
     parentPath = parentPath[:-2]
     listsPath = parentPath + 'Lists'
-    print(listsPath)
     folderList = []
     for x in os.listdir(listsPath):
         if x.endswith('.csv'):
